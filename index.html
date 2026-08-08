@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Code</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+
+    <!-- BARRA LATERAL -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>Arquivos</h2>
+            <div class="sidebar-actions">
+                <button id="btnNovoArquivo" title="Novo Arquivo"><i data-lucide="file-plus"></i></button>
+                <button id="btnNovaPasta" title="Nova Pasta"><i data-lucide="folder-plus"></i></button>
+                <button id="btnToggleAllFolders" title="Recolher/Expandir Pastas"><i data-lucide="list-tree"></i></button>
+                <button id="btnDeletarItem" title="Excluir Selecionado"><i data-lucide="trash-2"></i></button>
+            </div>
+            <div class="sidebar-actions-secondary">
+                <button id="btnAbrirPasta" title="Abrir Pasta Local"><i data-lucide="folder-open"></i> Pasta</button>
+                <button id="btnImportarArquivos" title="Importar Arquivos"><i data-lucide="upload"></i> Arquivo</button>
+            </div>
+            <input type="file" id="folderInput" webkitdirectory directory multiple style="display: none;">
+            <input type="file" id="fileInput" multiple style="display: none;">
+        </div>
+        
+        <div id="fileTree" class="file-tree"></div>
+    </aside>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="main-content">
+        <header class="topbar">
+            <!-- LOGO DA NOVA CODE + NOME DO ARQUIVO -->
+            <div class="topbar-left" style="display: flex; align-items: center; gap: 10px;">
+                <div class="logo-container" style="display: flex; align-items: center; gap: 6px; font-weight: bold; font-size: 14px; color: var(--text-main); padding-left: 4px;">
+                    <i data-lucide="code-2" style="color: var(--accent-color); width: 18px; height: 18px;"></i>
+                    <span>Nova Code</span>
+                </div>
+                <div style="width: 1px; height: 16px; background: var(--border-color); margin: 0 2px;"></div>
+                <input type="text" id="inputNomeArquivo" placeholder="Nome do arquivo..." disabled>
+            </div>
+            
+            <div class="topbar-right">
+                <button id="btnReiniciarSistema" title="Atualizar Execução" style="color: var(--accent-color);">
+                    <i data-lucide="rotate-cw"></i> Executar
+                </button>
+
+                <button id="btnToggleEditor" title="Mostrar/Ocultar Código"><i data-lucide="code"></i></button>
+                <button id="btnTogglePreview" title="Mostrar/Ocultar Preview"><i data-lucide="monitor-play"></i></button>
+                <button id="btnToggleTerminal" title="Mostrar/Ocultar Terminal"><i data-lucide="terminal"></i></button>
+                
+                <div class="theme-wrapper">
+                    <button id="btnThemeToggle" title="Temas"><i data-lucide="palette"></i> Temas</button>
+                    <div id="themeMenu" class="custom-theme-menu">
+                        <div class="theme-item" data-theme="dark"><i data-lucide="moon"></i> Dark</div>
+                        <div class="theme-item" data-theme="light"><i data-lucide="sun"></i> Light</div>
+                        <div class="theme-item" data-theme="dracula"><i data-lucide="zap"></i> Dracula</div>
+                        <div class="theme-item" data-theme="monokai"><i data-lucide="code-2"></i> Monokai</div>
+                    </div>
+                </div>
+
+                <button id="btnBaixarArquivo" title="Baixar Arquivo Atual"><i data-lucide="download"></i></button>
+                <button id="btnBaixarTudo" title="Baixar Todo Workspace (.zip)"><i data-lucide="archive"></i></button>
+            </div>
+        </header>
+
+        <!-- AVISO DE ARQUIVOS NÃO SALVOS -->
+        <div id="unsavedNotification" style="background: var(--bg-tertiary); color: var(--text-main); font-size: 11.5px; padding: 5px 14px; display: none; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color);">
+            <span id="unsavedText">⚠️ 1 arquivo não salvo. Pressione Ctrl+S para salvar.</span>
+        </div>
+
+        <!-- WORKSPACE -->
+        <div class="workspace" id="workspaceContainer">
+            <div class="pane editor-pane" id="editorPane">
+                <div class="editor-wrapper">
+                    <div id="lineNumbers">1</div>
+                    <div id="highlightLayer"></div>
+                    <textarea id="markdownInput" spellcheck="false" placeholder="Selecione ou crie um arquivo... (! + Tab para criar HTML)"></textarea>
+                </div>
+            </div>
+
+            <div id="resizer" title="Arraste para redimensionar"></div>
+
+            <div class="pane preview-pane" id="previewPane">
+                <div id="previewOutput"></div>
+            </div>
+        </div>
+
+        <!-- TERMINAL -->
+        <div id="terminalPane" class="terminal-pane" style="display: none;">
+            <div class="terminal-header">
+                <span><i data-lucide="terminal"></i> Console / Terminal</span>
+                <div class="terminal-actions">
+                    <button id="btnClearTerminal" title="Limpar Terminal"><i data-lucide="ban"></i></button>
+                    <button id="btnCloseTerminal" title="Fechar Terminal"><i data-lucide="x"></i></button>
+                </div>
+            </div>
+            <div id="terminalOutput" class="terminal-output">
+                <div class="terminal-log system">🚀 Sistema inicializado.</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- MENU DE CONTEXTO -->
+    <div id="contextMenu" class="context-menu" style="display: none;">
+        <div class="ctx-item" id="ctxNewFile"><i data-lucide="file-plus"></i> Novo Arquivo</div>
+        <div class="ctx-item" id="ctxNewFolder"><i data-lucide="folder-plus"></i> Nova Pasta</div>
+        <hr>
+        <div class="ctx-item" id="ctxRename"><i data-lucide="edit-2"></i> Renomear</div>
+        <div class="ctx-item" id="ctxDuplicate"><i data-lucide="copy"></i> Duplicar</div>
+        <div class="ctx-item" id="ctxMoveRoot"><i data-lucide="arrow-up-circle"></i> Mover para Raiz</div>
+        <div class="ctx-item" id="ctxExtract"><i data-lucide="package-open"></i> Extrair Arquivo</div>
+        <div class="ctx-item" id="ctxDownload"><i data-lucide="download"></i> Baixar</div>
+        <hr>
+        <div class="ctx-item ctx-danger" id="ctxDelete"><i data-lucide="trash-2"></i> Excluir</div>
+    </div>
+
+    <!-- MODAL -->
+    <div id="customModal" class="modal-overlay" style="display: none;">
+        <div class="modal-box">
+            <h3 id="modalTitle">Título</h3>
+            <p id="modalMessage">Mensagem</p>
+            <div id="modalContentContainer"></div>
+            <div class="modal-actions">
+                <button id="modalBtnCancel" class="btn-cancel">Cancelar</button>
+                <button id="modalBtnConfirm" class="btn-confirm">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
