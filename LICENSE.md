@@ -1,4 +1,4 @@
-# Licença de Uso Livre - jaobaixofps
+# Licença de Uso Livre - NovaCode
 
 **Copyright (c) 2026 jaobaixofps**
 
