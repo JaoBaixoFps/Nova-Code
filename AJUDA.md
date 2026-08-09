@@ -8,7 +8,7 @@ Certifique-se de que você seguiu o passo a passo da instalação inicial. Se o 
 ## Painel de Visualização
 Para não ter erro na hora de usar, confira abaixo como a interface precisa estar na sua tela:
 
-![Tela Principal do Programa](imagens/tela-inicial.png)
+![Tela Principal do Programa](imagens/TelaInicial.png)
 
 Se os campos não aparecerem como na imagem acima, verifique se todos os arquivos obrigatórios estão na mesma pasta.
 
