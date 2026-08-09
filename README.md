@@ -2,7 +2,7 @@
 
 Ferramenta utilitária para [diga em uma frase o que ela faz].
 
-## 📸 Preview
+## Preview
 ![Interface](./imagens/NovaCodeInterface.png)
 
 ## 🚀 Como começar
