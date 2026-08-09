@@ -1,0 +1,9 @@
+# Arquivos de Leitura e Documentação a serem ignorados
+README.md
+LICENSE.md
+AJUDA.md
+CONTRIBUTING.md
+CODE_OF_CONDUCT.md
+SECURITY.md
+CREDITS.md
+*.md
