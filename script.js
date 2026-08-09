@@ -1,6 +1,4 @@
-/* ========================================== */
-/*            VARIÁVEIS GLOBAIS               */
-/* ========================================== */
+// --- global ---
 
 let workspaceState = [];
 let activeFileId = null;
@@ -33,7 +31,7 @@ const btnCloseTerminal = document.getElementById('btnCloseTerminal');
 const btnClearTerminal = document.getElementById('btnClearTerminal');
 const btnReiniciarSistema = document.getElementById('btnReiniciarSistema');
 
-// --- CARREGAR TEMA AO ABRIR A PÁGINA ---
+// --- tema ---
 const temaSalvo = localStorage.getItem('novaCode_theme') || 'dark';
 document.body.className = temaSalvo; 
 document.documentElement.setAttribute('data-theme', temaSalvo);
@@ -930,9 +928,7 @@ function openConfirmModal(title, message, callback) {
 }
 
 
-/* ========================================== */
-/*   SISTEMA DE PASTA REAL E CTRL + S (NATIVO)  */
-/* ========================================== */
+// --- salvar nativo ---
 
 let rootFolderHandle = null;
 let currentFileHandle = null;
@@ -992,9 +988,7 @@ function readFileAsDataURL(file) {
 document.getElementById('btnAbrirPasta').replaceWith(document.getElementById('btnAbrirPasta').cloneNode(true));
 document.getElementById('btnAbrirPasta').addEventListener('click', abrirPastaReal);
 
-// ========================================== */
-//   CRIAÇÃO FÍSICA DIRETA NO COMPUTADOR       */
-// ========================================== */
+// --- criar arquivo ---
 
 document.getElementById('btnNovoArquivo').replaceWith(document.getElementById('btnNovoArquivo').cloneNode(true));
 document.getElementById('btnNovoArquivo').addEventListener('click', () => {
@@ -1112,7 +1106,7 @@ document.getElementById('btnNovaPasta').addEventListener('click', () => {
     });
 });
 
-// Monitora se o usuário digitou e compara com o original (some se voltar ao estado inicial)
+// Monitora se o usuário digitou e compara com o original
 editorArea.addEventListener('input', () => {
     let file = findFileById(workspaceState, activeFileId);
     if (!file || file.isBinary) return;
